@@ -2,7 +2,7 @@ import streamlit as st
 from datetime import datetime, date, timedelta
 
 # 1. SETTING HALAMAN WEB
-st.set_page_config(page_title="Kalkulator Infus wkwk", page_icon="💧", layout="centered")
+st.set_page_config(page_title="Kalkulator Infus Pro", page_icon="💧", layout="centered")
 
 # Inisialisasi State Navigasi Halaman
 if 'halaman' not in st.session_state:
@@ -19,7 +19,7 @@ list_menit = [f"{i:02d}" for i in range(60)]
 #          HALAMAN UTAMA (HOME)
 # ==========================================
 if st.session_state['halaman'] == 'home':
-    st.title("💧 Kalkulator Infus")
+    st.title("💧 Kalkulator Infus Profesional")
     st.write("Silakan pilih mode perhitungan di bawah ini untuk memulai:")
     
     # Kotak Pilihan Menu 1
@@ -32,7 +32,7 @@ if st.session_state['halaman'] == 'home':
 
     st.write("") 
 
-    # Kotak Pilihan Menu 2 (Judul diperbarui sesuai poin 5)
+    # Kotak Pilihan Menu 2
     with st.container(border=True):
         st.subheader("Menu 2: Konversi mL/jam ke TPM")
         st.write("Gunakan ini jika instruksi dokter berupa target **mL/jam** dan kamu ingin tahu setelan TPM pada roller clamp dengan cepat.")
@@ -56,7 +56,20 @@ elif st.session_state['halaman'] == 'menu1':
         volume = st.number_input("Masukkan Volume Infus (mL)", min_value=0.0, value=None, placeholder="Contoh: 500")
         tpm = st.number_input("Masukkan Kecepatan Infus (TPM)", min_value=0.0, value=None, placeholder="Contoh: 20")
         
-        st.info("💡 Contoh faktor tetes yang umum pada kemasan:\n• 10 gtt/mL\n• 15 gtt/mL\n• 20 gtt/mL\n• 60 gtt/mL\n\n*Gunakan angka sesuai yang tertera pada kemasan infus set yang digunakan.*")
+        # KOTAK EDUKASI REVISI: Mempertegas istilah gtt/mL agar tidak membingungkan
+        st.info("""
+        💡 **PANDUAN PENTING FAKTOR TETES (gtt/mL):**
+        Faktor tetes (**gtt/mL**) adalah ukuran selang infus (banyaknya tetesan yang dibutuhkan untuk menghasilkan 1 mL cairan). Ini **BERBEDA dengan Kecepatan Infus (TPM)**.
+        
+        Nilai yang umum ditemukan pada kemasan:
+        • **10 gtt/mL** (umumnya makroset vendor tertentu)
+        • **15 gtt/mL** (umumnya makroset vendor tertentu)
+        • **20 gtt/mL** (umumnya makroset standar dewasa)
+        • **60 gtt/mL** (umumnya mikroset)
+        
+        *⚠️ Catatan Klinis: Perhatikan kata **'umumnya'**, bukan **'pasti'**. Selalu lihat dan gunakan angka presisi yang tertera pada plastik kemasan infus set yang Anda pegang.*
+        """)
+        
         faktor_tetes = st.number_input("Masukkan Faktor Tetes Kemasan (gtt/mL)", min_value=0.0, value=None, placeholder="Contoh: 20")
         
         st.write("⏱️ **Waktu Mulai Dipasang:**")
@@ -79,7 +92,6 @@ elif st.session_state['halaman'] == 'menu1':
             
             waktu_mulai = datetime.now().replace(hour=int(jam_terpilih), minute=int(menit_terpilih), second=0, microsecond=0)
             
-            # Perbaikan Bug Logika Waktu Habis (Poin 2)
             # Presisi (Mahasiswa)
             total_detik = total_menit * 60
             p_jam = int(total_detik // 3600)
@@ -87,7 +99,7 @@ elif st.session_state['halaman'] == 'menu1':
             p_detik = int(total_detik % 60)
             waktu_habis_presisi = waktu_mulai + timedelta(minutes=total_menit)
             
-            # Praktis (Praktisi) - Dibulatkan total menitnya dulu baru dipecah ke jam/menit
+            # Praktis (Praktisi)
             menit_bulat = round(total_menit)
             pr_jam = menit_bulat // 60
             pr_menit = menit_bulat % 60
@@ -96,7 +108,6 @@ elif st.session_state['halaman'] == 'menu1':
             with st.container(border=True):
                 st.success("### 📊 LEMBAR HASIL KALKULASI")
                 st.write(f"**Volume Infus:** {volume} mL")
-                # Perubahan istilah sesuai poin 1 (Laju Infus Hasil Perhitungan)
                 st.write(f"**Laju Infus (Hasil Perhitungan):** {ml_per_jam:.2f} mL/jam")
                 st.write(f"**Jam Pemasangan:** {waktu_mulai.strftime('%H:%M WIB')}")
                 
@@ -121,10 +132,22 @@ elif st.session_state['halaman'] == 'menu2':
     with st.form("form_infus_2"):
         st.write("### Isi Data Laju Aliran")
         
-        # Istilah diperjelas sesuai poin 9
         laju_infus = st.number_input("Masukkan Laju yang Diinginkan (mL/jam)", min_value=0.0, value=None, placeholder="Contoh: 100")
         
-        st.info("💡 Contoh faktor tetes yang umum pada kemasan:\n• 10 gtt/mL\n• 15 gtt/mL\n• 20 gtt/mL\n• 60 gtt/mL\n\n*Gunakan angka sesuai yang tertera pada kemasan infus set yang digunakan.*")
+        # KOTAK EDUKASI REVISI: Diaplikasikan juga di menu 2
+        st.info("""
+        💡 **PANDUAN PENTING FAKTOR TETES (gtt/mL):**
+        Faktor tetes (**gtt/mL**) adalah ukuran selang infus (banyaknya tetesan yang dibutuhkan untuk menghasilkan 1 mL cairan). Ini **BERBEDA dengan Kecepatan Infus (TPM)**.
+        
+        Nilai yang umum ditemukan pada kemasan:
+        • **10 gtt/mL** (umumnya makroset vendor tertentu)
+        • **15 gtt/mL** (umumnya makroset vendor tertentu)
+        • **20 gtt/mL** (umumnya makroset standar dewasa)
+        • **60 gtt/mL** (umumnya mikroset)
+        
+        *⚠️ Catatan Klinis: Perhatikan kata **'umumnya'**, bukan **'pasti'**. Selalu lihat dan gunakan angka presisi yang tertera pada plastik kemasan infus set yang Anda pegang.*
+        """)
+        
         faktor_tetes = st.number_input("Masukkan Faktor Tetes Kemasan (gtt/mL)", min_value=0.0, value=None, placeholder="Contoh: 20")
         
         hitung = st.form_submit_button("Hitung Kebutuhan Tetesan ➔", use_container_width=True)
@@ -142,7 +165,6 @@ elif st.session_state['halaman'] == 'menu2':
                 st.write(f"**Laju yang Diinginkan:** {laju_infus} mL/jam")
                 st.write(f"**Faktor Tetes Set:** {faktor_tetes} gtt/mL")
                 
-                # Perubahan label output sesuai poin 3 dan 9
                 tab_mhs, tab_prk = st.tabs(["🔴 KHUSUS MAHASISWA (Presisi)", "🟢 KHUSUS PRAKTISI (Lapangan)"])
                 with tab_mhs:
                     st.write(f"• **TPM Teoretis:** {tpm_teoretis:.2f} TPM")
