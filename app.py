@@ -2,7 +2,7 @@ import streamlit as st
 from datetime import datetime, date, timedelta
 
 # 1. SETTING HALAMAN WEB
-st.set_page_config(page_title="Kalkulator Infus Pro", page_icon="💧", layout="centered")
+st.set_page_config(page_title="Kalkulator Infus wkwk", page_icon="💧", layout="centered")
 
 # Inisialisasi State Navigasi Halaman
 if 'halaman' not in st.session_state:
@@ -19,7 +19,7 @@ list_menit = [f"{i:02d}" for i in range(60)]
 #          HALAMAN UTAMA (HOME)
 # ==========================================
 if st.session_state['halaman'] == 'home':
-    st.title("💧 Kalkulator Infus Profesional")
+    st.title("💧 Kalkulator Infus")
     st.write("Silakan pilih mode perhitungan di bawah ini untuk memulai:")
     
     # Kotak Pilihan Menu 1
