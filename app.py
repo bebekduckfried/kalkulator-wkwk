@@ -4,11 +4,10 @@ from datetime import datetime, date, timedelta
 # 1. SETTING HALAMAN WEB
 st.set_page_config(page_title="Kalkulator Infus Pro", page_icon="💧", layout="centered")
 
-# Inisialisasi State Navigasi (Biar bisa bolak-balik Halaman Utama <-> Form)
+# Inisialisasi State Navigasi Halaman
 if 'halaman' not in st.session_state:
     st.session_state['halaman'] = 'home'
 
-# Fungsi pembantu untuk tombol kembali
 def kembali_ke_home():
     st.session_state['halaman'] = 'home'
 
@@ -38,7 +37,7 @@ if st.session_state['halaman'] == 'home':
             st.rerun()
 
 # ==========================================
-#       HALAMAN MENU 1 (INPUT SEKALIGUS)
+#       HALAMAN MENU 1 (INPUT MANUAL BERSIH)
 # ==========================================
 elif st.session_state['halaman'] == 'menu1':
     if st.button("← Kembali ke Menu Utama"):
@@ -47,31 +46,26 @@ elif st.session_state['halaman'] == 'menu1':
         
     st.title("📋 Menu 1: Hitung Waktu Habis")
     
-    # Semua pertanyaan ditampilkan dalam satu box Form sekaligus
     with st.form("form_infus_1"):
         st.write("### Isi Data Cairan")
         
-        volume = st.number_input("Masukkan Volume Cairan Infus (mL)", min_value=0.0, value=500.0, step=50.0)
-        tpm = st.number_input("Masukkan Kecepatan Tetesan (TPM)", min_value=0.0, value=20.0, step=1.0)
+        # value=None membuat kotak kosong secara bawaan saat pertama kali dibuka
+        volume = st.number_input("Masukkan Volume Cairan Infus (mL)", min_value=0.0, value=None, placeholder="Contoh: 500")
+        tpm = st.number_input("Masukkan Kecepatan Tetesan (TPM)", min_value=0.0, value=None, placeholder="Contoh: 20")
         
-        faktor_opsi = st.selectbox("Pilih Faktor Tetes Kemasan (gtt/mL)", ["20 (Standar Dewasa)", "60 (Standar Anak)", "10", "15", "Kustom"])
+        st.info("💡 Petunjuk Faktor Tetes (gtt/mL) pada kemasan infus set yang umum:\n• 10 / 15 / 20 (Dewasa/Makro) \n• 60 (Anak/Mikro)")
+        faktor_tetes = st.number_input("Masukkan Faktor Tetes Kemasan (gtt/mL)", min_value=0.0, value=None, placeholder="Contoh: 20")
         
-        faktor_tetes = 20.0
-        if "20" in faktor_opsi: faktor_tetes = 20.0
-        elif "60" in faktor_opsi: faktor_tetes = 60.0
-        elif "10" in faktor_opsi: faktor_tetes = 10.0
-        elif "15" in faktor_opsi: faktor_tetes = 15.0
-        else:
-            faktor_tetes = st.number_input("Masukkan Faktor Tetes Kustom", min_value=0.1, value=20.0)
-            
         jam_mulai_time = st.time_input("Jam Berapa Infus Mulai Dipasang?", value=datetime.now().time())
         
-        # Tombol submit di dalam form
         hitung = st.form_submit_button("Hitung Hasil Perhitungan ➔", use_container_width=True)
 
     if hitung:
-        if volume <= 0 or tpm <= 0:
-            st.error("Volume dan TPM harus lebih besar dari 0!")
+        # Validasi wajib isi jika user belum mengetik apa pun
+        if volume is None or tpm is None or faktor_tetes is None:
+            st.error("⚠️ Semua kotak jawaban di atas wajib diisi terlebih dahulu!")
+        elif volume <= 0 or tpm <= 0 or faktor_tetes <= 0:
+            st.error("⚠️ Angka yang dimasukkan harus lebih besar dari 0!")
         else:
             # Hitung Data
             total_menit = (volume * faktor_tetes) / tpm
@@ -81,16 +75,13 @@ elif st.session_state['halaman'] == 'menu1':
             waktu_habis_presisi = waktu_mulai + timedelta(minutes=total_menit)
             waktu_habis_praktis = waktu_mulai + timedelta(minutes=round(total_menit))
             
-            # Format durasi teks
             p_jam, p_menit = int(total_menit // 60), int(total_menit % 60)
             
-            # TAMPILAN LEMBAR HASIL DALAM KOTAK
             with st.container(border=True):
                 st.success("### 📊 LEMBAR HASIL KALKULASI")
                 st.write(f"**Laju Aktual Cairan:** {ml_per_jam:.2f} mL/jam")
                 st.write(f"**Jam Pemasangan:** {waktu_mulai.strftime('%H:%M WIB')}")
                 
-                # Split hasil via Tabs agar rapi
                 tab_mhs, tab_prk = st.tabs(["🔴 KHUSUS MAHASISWA (Presisi)", "🟢 KHUSUS PRAKTISI (Lapangan)"])
                 with tab_mhs:
                     st.write(f"• **Durasi Tepat:** {p_jam} Jam {total_menit % 60:.2f} Menit")
@@ -100,7 +91,7 @@ elif st.session_state['halaman'] == 'menu1':
                     st.write(f"• **Perkiraan Selesai:** {waktu_habis_praktis.strftime('%H:%M WIB')}")
 
 # ==========================================
-#       HALAMAN MENU 2 (INPUT SEKALIGUS)
+#       HALAMAN MENU 2 (INPUT MANUAL BERSIH)
 # ==========================================
 elif st.session_state['halaman'] == 'menu2':
     if st.button("← Kembali ke Menu Utama"):
@@ -112,26 +103,22 @@ elif st.session_state['halaman'] == 'menu2':
     with st.form("form_infus_2"):
         st.write("### Isi Data Cairan")
         
-        volume = st.number_input("Masukkan Volume Cairan Infus (mL)", min_value=0.0, value=500.0, step=50.0)
-        laju_infus = st.number_input("Masukkan Target Laju Cairan (mL/jam)", min_value=0.0, value=100.0, step=10.0)
+        volume = st.number_input("Masukkan Volume Cairan Infus (mL)", min_value=0.0, value=None, placeholder="Contoh: 500")
+        laju_infus = st.number_input("Masukkan Target Laju Cairan (mL/jam)", min_value=0.0, value=None, placeholder="Contoh: 100")
         
-        faktor_opsi = st.selectbox("Pilih Faktor Tetes Kemasan (gtt/mL)", ["20 (Standar Dewasa)", "60 (Standar Anak)", "10", "15", "Kustom"])
+        st.info("💡 Petunjuk Faktor Tetes (gtt/mL) pada kemasan infus set yang umum:\n• 10 / 15 / 20 (Dewasa/Makro) \n• 60 (Anak/Mikro)")
+        faktor_tetes = st.number_input("Masukkan Faktor Tetes Kemasan (gtt/mL)", min_value=0.0, value=None, placeholder="Contoh: 20")
         
-        faktor_tetes = 20.0
-        if "20" in faktor_opsi: faktor_tetes = 20.0
-        elif "60" in faktor_opsi: faktor_tetes = 60.0
-        elif "10" in faktor_opsi: faktor_tetes = 10.0
-        elif "15" in faktor_opsi: faktor_tetes = 15.0
-        else:
-            faktor_tetes = st.number_input("Masukkan Faktor Tetes Kustom", min_value=0.1, value=20.0)
-            
         jam_mulai_time = st.time_input("Jam Berapa Infus Mulai Dipasang?", value=datetime.now().time())
         
         hitung = st.form_submit_button("Hitung Hasil Perhitungan ➔", use_container_width=True)
 
     if hitung:
-        if volume <= 0 or laju_infus <= 0:
-            st.error("Volume dan Laju Cairan harus lebih besar dari 0!")
+        # Validasi wajib isi jika user belum mengetik apa pun
+        if volume is None or laju_infus is None or faktor_tetes is None:
+            st.error("⚠️ Semua kotak jawaban di atas wajib diisi terlebih dahulu!")
+        elif volume <= 0 or laju_infus <= 0 or faktor_tetes <= 0:
+            st.error("⚠️ Angka yang dimasukkan harus lebih besar dari 0!")
         else:
             tpm_teoretis = (laju_infus * faktor_tetes) / 60
             total_menit = (volume / laju_infus) * 60
