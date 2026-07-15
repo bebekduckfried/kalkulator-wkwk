@@ -4,6 +4,56 @@ from datetime import datetime, date, timedelta
 # 1. SETTING HALAMAN WEB
 st.set_page_config(page_title="Kalkulator Infus Pro", page_icon="💧", layout="centered")
 
+# ==========================================
+#      INJEKSI KODE DESAIN (CSS GLOW UP)
+# ==========================================
+st.markdown("""
+<style>
+    /* 1. Mengubah Gaya Judul Utama */
+    .main h1 {
+        color: #1E3A8A !important; /* Biru Gelap Medis */
+        font-family: 'Inter', sans-serif;
+        font-weight: 800 !important;
+        text-align: center;
+        margin-bottom: 5px;
+    }
+    
+    /* 2. Menghias Semua Tombol Utama */
+    div.stButton > button {
+        background-color: #2563EB !important; /* Biru Cerah Medis */
+        color: white !important;
+        border-radius: 10px !important;
+        border: none !important;
+        padding: 10px 20px !important;
+        font-weight: 600 !important;
+        transition: all 0.3s ease-in-out !important;
+        box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2) !important;
+    }
+    
+    /* Efek Animasi Bergerak Saat Tombol Disentuh Kursor (Ala PPT) */
+    div.stButton > button:hover {
+        background-color: #1D4ED8 !important; /* Biru Lebih Gelap */
+        transform: translateY(-2px) !important; /* Efek Melayang Naik */
+        box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.4) !important;
+    }
+    
+    /* 3. Mempercantik Kotak Kontainer (Container Border) */
+    [data-testid="stVerticalBlockBorderWrapper"] {
+        border-radius: 16px !important;
+        border: 1px solid #E2E8F0 !important;
+        background-color: #F8FAFC !important; /* Latar Belakang Kotak Soft Gray-Blue */
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+        padding: 20px !important;
+    }
+
+    /* 4. Merapikan Teks Petunjuk Informasi */
+    .stAlert {
+        border-radius: 12px !important;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+
 # Inisialisasi State Navigasi Halaman
 if 'halaman' not in st.session_state:
     st.session_state['halaman'] = 'home'
@@ -20,7 +70,8 @@ list_menit = [f"{i:02d}" for i in range(60)]
 # ==========================================
 if st.session_state['halaman'] == 'home':
     st.title("💧 Kalkulator Infus Profesional")
-    st.write("Silakan pilih mode perhitungan di bawah ini untuk memulai:")
+    st.write("<p style='text-align: center; color: #64748B;'>Silakan pilih mode perhitungan di bawah ini untuk memulai:</p>", unsafe_allow_html=True)
+    st.write("")
     
     # Kotak Pilihan Menu 1
     with st.container(border=True):
@@ -56,20 +107,7 @@ elif st.session_state['halaman'] == 'menu1':
         volume = st.number_input("Masukkan Volume Infus (mL)", min_value=0.0, value=None, placeholder="Contoh: 500")
         tpm = st.number_input("Masukkan Kecepatan Infus (TPM)", min_value=0.0, value=None, placeholder="Contoh: 20")
         
-        # KOTAK EDUKASI REVISI: Mempertegas istilah gtt/mL agar tidak membingungkan
-        st.info("""
-        💡 **PANDUAN PENTING FAKTOR TETES (gtt/mL):**
-        Faktor tetes (**gtt/mL**) adalah ukuran selang infus (banyaknya tetesan yang dibutuhkan untuk menghasilkan 1 mL cairan). Ini **BERBEDA dengan Kecepatan Infus (TPM)**.
-        
-        Nilai yang umum ditemukan pada kemasan:
-        • **10 gtt/mL** (umumnya makroset vendor tertentu)
-        • **15 gtt/mL** (umumnya makroset vendor tertentu)
-        • **20 gtt/mL** (umumnya makroset standar dewasa)
-        • **60 gtt/mL** (umumnya mikroset)
-        
-        *⚠️ Catatan Klinis: Perhatikan kata **'umumnya'**, bukan **'pasti'**. Selalu lihat dan gunakan angka presisi yang tertera pada plastik kemasan infus set yang Anda pegang.*
-        """)
-        
+        st.info("💡 Contoh faktor tetes yang umum pada kemasan:\n• 10 gtt/mL\n• 15 gtt/mL\n• 20 gtt/mL\n• 60 gtt/mL\n\n*Gunakan angka sesuai yang tertera pada kemasan infus set yang digunakan.*")
         faktor_tetes = st.number_input("Masukkan Faktor Tetes Kemasan (gtt/mL)", min_value=0.0, value=None, placeholder="Contoh: 20")
         
         st.write("⏱️ **Waktu Mulai Dipasang:**")
@@ -134,20 +172,7 @@ elif st.session_state['halaman'] == 'menu2':
         
         laju_infus = st.number_input("Masukkan Laju yang Diinginkan (mL/jam)", min_value=0.0, value=None, placeholder="Contoh: 100")
         
-        # KOTAK EDUKASI REVISI: Diaplikasikan juga di menu 2
-        st.info("""
-        💡 **PANDUAN PENTING FAKTOR TETES (gtt/mL):**
-        Faktor tetes (**gtt/mL**) adalah ukuran selang infus (banyaknya tetesan yang dibutuhkan untuk menghasilkan 1 mL cairan). Ini **BERBEDA dengan Kecepatan Infus (TPM)**.
-        
-        Nilai yang umum ditemukan pada kemasan:
-        • **10 gtt/mL** (umumnya makroset vendor tertentu)
-        • **15 gtt/mL** (umumnya makroset vendor tertentu)
-        • **20 gtt/mL** (umumnya makroset standar dewasa)
-        • **60 gtt/mL** (umumnya mikroset)
-        
-        *⚠️ Catatan Klinis: Perhatikan kata **'umumnya'**, bukan **'pasti'**. Selalu lihat dan gunakan angka presisi yang tertera pada plastik kemasan infus set yang Anda pegang.*
-        """)
-        
+        st.info("💡 Contoh faktor tetes yang umum pada kemasan:\n• 10 gtt/mL\n• 15 gtt/mL\n• 20 gtt/mL\n• 60 gtt/mL\n\n*Gunakan angka sesuai yang tertera pada kemasan infus set yang digunakan.*")
         faktor_tetes = st.number_input("Masukkan Faktor Tetes Kemasan (gtt/mL)", min_value=0.0, value=None, placeholder="Contoh: 20")
         
         hitung = st.form_submit_button("Hitung Kebutuhan Tetesan ➔", use_container_width=True)
